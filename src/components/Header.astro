@@ -1,0 +1,54 @@
+---
+import { useEffect, useState, useRef } from 'astro/client';
+
+const [dropdownOpen, setDropdownOpen] = useState(false);
+const dropdownRef = useRef(null);
+
+// Close dropdown if clicked outside
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
+  };
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
+---
+
+<header class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-900 shadow-md relative">
+  <div class="text-2xl font-bold text-blue-800">
+    <a href="/">Civic<span class="text-blue-500">Unlock</span></a>
+  </div>
+
+  <nav class="flex items-center gap-8 text-base relative">
+    <div class="relative" ref={dropdownRef}>
+      <button
+        class="hover:underline focus:outline-none flex items-center gap-2"
+        onClick={() => setDropdownOpen((prev) => !prev)}
+        aria-haspopup="true"
+        aria-expanded={dropdownOpen}
+        aria-controls="city-menu"
+      >
+        Cities
+        <svg class="w-4 h-4 transform transition-transform duration-200" style={dropdownOpen ? 'rotate:180deg' : ''} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <div id="city-menu" role="menu" class={`absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white dark:bg-gray-800 transition-all transform origin-top-right ${
+        dropdownOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'
+      } duration-200`}>
+        <a href="/whitehorse/" role="menuitem" class="block px-4 py-2 hover:bg-blue-100 dark:hover:bg-blue-900 focus:outline-none">Whitehorse</a>
+        <a href="/calgary/" role="menuitem" class="block px-4 py-2 hover:bg-blue-100 dark:hover:bg-blue-900 focus:outline-none">Calgary</a>
+        <a href="/vancouver/" role="menuitem" class="block px-4 py-2 hover:bg-blue-100 dark:hover:bg-blue-900 focus:outline-none">Vancouver</a>
+      </div>
+    </div>
+
+    <button id="darkModeToggle" class="text-xl">
+      🌙
+    </button>
+  </nav>
+</header>
